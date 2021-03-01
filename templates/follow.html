@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Последние обновления в подписках{% endblock %}
+{% block header %}Последние обновления в подписках{% endblock %}
+{% block content %}
+
+<div class="container">
+    {% include "menu.html" with follow=True %}
+        <!-- Установка кэша на 20 секунд -->
+        {% load cache %}
+        {% cache 20 follow_page %}
+        
+            <!-- Вывод ленты записей -->
+            {% for post in page %}
+                <!-- Вот он, новый include! -->
+                {% include "post_item.html" with post=post %}
+            {% endfor %}
+        {% endcache %}      
+</div>
+    {% include "paginator.html" %}
+{% endblock %}

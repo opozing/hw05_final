@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Об авторе проекта{% endblock %}
+{% block content %}
+{% load user_filters %}
+  <main role="main" class="container">
+    <div class="row">
+      <!-- Левый вспомогательный блок -->
+      <div class="col-md-3 mb-3 mt-1">
+        <div class="card">
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <div class="h3">
+                  Об авторе
+                </div> 
+              </li>
+              <li class="list-group-item">
+                <div class="h6 text-muted">
+                  Устинов Сергей Александрович 
+                  <br>
+                  <br>
+                  <a href=https://vk.com/id1003473> Я Вконтакте</a><br>
+                  <a href=https://github.com/opozing>Я на GitHub</a><br>
+                </div>
+              </li>
+            </ul>                                               
+          </div>                    
+        </div>                
+      </div>
+      <!-- Тело страницы -->
+      <div class="col-md-9">
+        <div class="card-body">                    
+          <div class="card-text">
+            <p>
+                Пришел к программированию потомучто уткнулся на основной работе в потолок. 
+                Долго не решался, около года изучал направления, условия, программы и школы обучения.
+                Выбор стоял между академией ШАГ с обучением очно, и онлайн школой Яндекс Практикум. Выбор
+                в пользу последней был сделан по причине меньшего срока обучения, хороших отзывов от моих друзей,
+                которые учились на тестировщиков и успешно устроились на работу после окончания обучения, и 
+                онлайн формата обучения.<br>
+                Отучившись 4 месяца могу сказать две вещи:<br>
+                1 - Это ужасно сложно, но интересно.<br>
+                2 - Я определенно порекомендую Яндекс Практикум друзьям.
+            </p>
+          </div>                    
+        </div>                
+      </div>            
+    </div>        
+  </main>
+{% endblock %} 
