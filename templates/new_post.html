@@ -15,12 +15,7 @@
                   </div>
                 {% endfor %}
 
-                {% if edit %}
-                <form method="post" enctype="multipart/form-data" action="{% url 'posts:post_edit' post.author.username post.id %}">
-                {% else %}
-                <form method="post" enctype="multipart/form-data" action="{% url 'posts:new_post' %}">
-                {% endif %}
-                
+                <form method="post" enctype="multipart/form-data"  action={% if edit %}"{% url 'posts:post_edit' post.author.username post.id %}"{% else %}"{% url 'posts:new_post' %}"{% endif %}>
                 
                     {% csrf_token %}
 

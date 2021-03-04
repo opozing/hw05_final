@@ -74,7 +74,7 @@ class PostFormsTests(TestCase):
         )
 
         self.assertEqual(Post.objects.count(), posts_count + 1)
-        self.assertRedirects(response, "/")
+        self.assertRedirects(response, reverse("posts:index"))
         self.assertTrue(Post.objects.filter(
             text="Тестовый пост1",
             author=self.user,

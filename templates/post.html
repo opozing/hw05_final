@@ -1,9 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Просмотр записи {% endblock %}
-
+{% block title %}Просмотр записи{% endblock %}
 
 {% block content %}
-
 <main role="main" class="container">
     <div class="row">
             <div class="col-md-3 mb-3 mt-1">
@@ -15,7 +13,7 @@
                                 </div>
                                 <div class="h3 text-muted">
                                      <!-- username автора -->
-                                     @{{ post.author }}
+                                     @{{ post.author.username }}
                                 </div>
                         </div>
                         <ul class="list-group list-group-flush">
@@ -36,17 +34,12 @@
         </div>
 
         <div class="col-md-9">
-
-            <!-- Пост -->  
             <div class="container">
                 <!-- Вывод ленты записей -->
-                <!-- Вот он, новый include! -->
                 {% include "post_item.html" with post=post %}
-                     
-         </div>
-                {% include "comments.html" with post=post %}
-                       
-                </div>
+            </div>
+            {% include "comments.html" with post=post %}
+        </div>
      </div>
     </div>
 </main>

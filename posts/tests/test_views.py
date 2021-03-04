@@ -9,7 +9,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
-from posts.models import Follow, Group, Post
+from posts.models import Follow, Group, Post, Comment
 
 
 @override_settings(MEDIA_ROOT=settings.MEDIA_ROOT)
@@ -62,13 +62,17 @@ class PostsViewsTests(TestCase):
             image=uploaded
         )
 
+        cls.follow = Follow.objects.create(
+            author=cls.user,
+            user=cls.user2
+        )
+
     @classmethod
     def tearDownClass(cls):
         shutil.rmtree(settings.MEDIA_ROOT, ignore_errors=True)
         super().tearDownClass()
 
     def setUp(self):
-        cache.clear()
         self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client2 = Client()
@@ -80,7 +84,7 @@ class PostsViewsTests(TestCase):
         comments = {
             'post': self.post,
             'author': self.user,
-            'text': 'One Two'
+            'text': 'One Two',
         }
         self.authorized_client.post(reverse('posts:add_comment',
                                     kwargs={'username': self.user.username,
@@ -102,14 +106,16 @@ class PostsViewsTests(TestCase):
                             'post_id': self.post.id}), data=comment)
         self.assertEqual(response.status_code, 302)
 
-    def test_follow_new_post(self):
-        """Новая запись юзера появляется у тех,
-        кто на него подписан и не появляется у тех, кто не подписан."""
-        Follow.objects.create(author=self.user, user=self.user2)
+    def test_follow_new_post_view(self):
+        """Новый пост юзера появляется у тех, кто на него подписан."""
         response = self.authorized_client2.get(reverse('posts:follow_index'))
         self.assertEqual(response.context["page"][0].text, self.post.text)
+
+    def test_unfollow_new_post_unview(self):
+        """Новый пост юзера не появляется у тех, кто на него не подписан."""
+        post2 = Post.objects.create(text="Тестовый пост", author=self.user2)
         response = self.authorized_client.get(reverse('posts:follow_index'))
-        self.assertIsNot(response.context, False)
+        self.assertNotIn(post2, response.context["page"])
 
     def test_follow(self):
         """Авторизованный юзер может подписываться на других авторов."""
@@ -120,7 +126,6 @@ class PostsViewsTests(TestCase):
 
     def test_unfollow(self):
         """Авторизованный юзер может отписываться."""
-        Follow.objects.create(user=self.user2, author=self.user)
         self.authorized_client2.get(reverse('posts:profile_unfollow',
                                     kwargs={'username': self.user}))
         self.assertFalse(Follow.objects.filter(user=self.user2,
@@ -134,6 +139,9 @@ class PostsViewsTests(TestCase):
         post.delete()
         response = self.authorized_client.get(reverse('posts:index'))
         self.assertEqual(cached_response_content, response.content)
+        cache.clear()
+        response = self.authorized_client.get(reverse('posts:index'))
+        self.assertNotEqual(cached_response_content, response.content)
 
     def test_views_uses_correct_templates(self):
         """URL-адреса используют соответствующие шаблоны."""
