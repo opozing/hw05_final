@@ -2,14 +2,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
-
+from yatube.settings import PAG_CONST
 from .forms import CommentForm, PostForm
 from .models import Follow, Group, Post
 
 
 def index(request):
     post_objects = Post.objects.all()
-    paginator = Paginator(post_objects, 10)
+    paginator = Paginator(post_objects, PAG_CONST)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     return render(request, "index.html", {"page": page,
@@ -19,7 +19,7 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     post_objects = group.posts.all()
-    paginator = Paginator(post_objects, 10)
+    paginator = Paginator(post_objects, PAG_CONST)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     context = {"group": group,
@@ -55,14 +55,11 @@ def add_comment(request, username, post_id):
 def profile(request, username):
     author = get_object_or_404(User, username=username)
     author_posts = author.posts.all()
-    paginator = Paginator(author_posts, 10)
+    paginator = Paginator(author_posts, PAG_CONST)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
-
-    following = Follow.objects.filter(
-        user=request.user,
-        author=author
-    ) if request.user.is_authenticated else None
+    following = request.user.is_authenticated and Follow.objects.filter(
+        user=request.user, author=author).exists()
 
     context = {
         "author": author,
@@ -121,7 +118,7 @@ def server_error(request):
 def follow_index(request):
     """страница с постами авторов , на которых подписан текущий юзер."""
     post_objects = Post.objects.filter(author__following__user=request.user)
-    paginator = Paginator(post_objects, 10)
+    paginator = Paginator(post_objects, PAG_CONST)
     page_number = request.GET.get("page")
     page = paginator.get_page(page_number)
     context = {
