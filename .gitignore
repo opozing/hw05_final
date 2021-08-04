@@ -1,5 +1,6 @@
 .git/*
 env/
+.env
 venv/
 .venv
 .venv/
@@ -16,8 +17,6 @@ __pycache__/
 *.sublime-project
 *.sublime-workspace
 
-static/
-posts/static/
 
 db.sqlite3
 
